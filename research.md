@@ -115,7 +115,7 @@ c10（Core 10）是 PyTorch 最底层的 C++ 库，设计原则为：
 
 ### 2.3 TensorImpl —— 张量的核心表示
 
-`TensorImpl`（3334 行）是 PyTorch 中张量的 C++ 底层实现，每个 Python 层的 `torch.Tensor` 最终都指向一个 `TensorImpl`：
+`TensorImpl`（约 3000+ 行）是 PyTorch 中张量的 C++ 底层实现，每个 Python 层的 `torch.Tensor` 最终都指向一个 `TensorImpl`：
 
 ```cpp
 struct TensorImpl : public c10::intrusive_ptr_target {
@@ -171,7 +171,7 @@ struct Allocator {
 ```
 
 - **CPUAllocator**：基于 `malloc`/`free`，默认 16 字节 SIMD 对齐
-- **CUDACachingAllocator**（171KB 实现）：GPU 内存缓存池管理，支持流有序分配、CUDA Graph 感知分配
+- **CUDACachingAllocator**（大规模实现）：GPU 内存缓存池管理，支持流有序分配、CUDA Graph 感知分配
 - 通过 `SetAllocator(DeviceType, Allocator*)` 全局注册，每种设备类型一个分配器
 
 ---
@@ -206,7 +206,7 @@ aten/src/ATen/
 
 ### 3.3 native_functions.yaml —— 算子注册表
 
-这是 PyTorch 最关键的文件之一（16174 行），声明式地定义了所有算子：
+这是 PyTorch 最关键的文件之一（约 16000+ 行），声明式地定义了所有算子：
 
 ```yaml
 # 基本结构
@@ -276,7 +276,7 @@ ALSO_REGISTER_AVX512_DISPATCH(sum_impl, &sum_kernel_impl);
 
 ### 4.1 包初始化 (torch/__init__.py)
 
-约 3016 行，是 PyTorch Python 包的入口点：
+约 3000+ 行，是 PyTorch Python 包的入口点：
 - 导入核心 C++ 扩展 `torch._C`
 - 注册 150+ 公共 API（Tensor 类型、autograd 函数、编译工具等）
 - 平台特定初始化（Windows DLL 路径、ROCm 初始化钩子）
@@ -290,7 +290,7 @@ ALSO_REGISTER_AVX512_DISPATCH(sum_impl, &sum_kernel_impl);
 
 ### 4.2 Python Tensor 类 (torch/_tensor.py)
 
-约 1893 行，是 C++ `TensorImpl` 的 Python 包装器：
+约 1800+ 行，是 C++ `TensorImpl` 的 Python 包装器：
 - 继承自 `torch._C.TensorBase`
 - 启用 `__torch_function__` 协议支持自定义张量子类
 - 处理序列化状态恢复
@@ -318,7 +318,7 @@ nn.Module (基类)
 
 19 种优化器实现：SGD、Adam、AdamW、RMSprop、Adagrad、AdaDelta、LBFGS、NAdam、RAdam、Muon 等。
 
-**基类 `Optimizer`（1195 行）**：
+**基类 `Optimizer`（约 1000+ 行）**：
 - 参数组管理：每层可设不同学习率
 - 状态字典序列化
 - Pre/Post step 钩子系统
@@ -531,7 +531,7 @@ PyTorch 的自动求导系统实现了反向模式自动微分（reverse-mode AD
 
 ### 7.3 derivatives.yaml —— 梯度定义
 
-所有算子的梯度公式都在此文件中声明式定义（3257 行）：
+所有算子的梯度公式都在此文件中声明式定义（约 3000+ 行）：
 
 ```yaml
 # 简单一元函数
