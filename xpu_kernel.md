@@ -1283,7 +1283,7 @@ class TestoneDNNFusion(TestCase):
 - SDPA 注意力的反向传播支持有限（Flash Attention 反向已有但 oneDNN SDPA 反向尚不完整）
 - 最大注意力头维度限制为 576
 - SDPA 暂不支持 dropout
-- Float8 缩放矩阵乘不支持 fast_accum 模式
+- Float8 缩放矩阵乘不支持 fast_accum 模式（当前实现限制，参数被接受但不生效）
 - 注册的专有 XPU 分发算子数量（29 个）相比 CUDA 后端仍较少，更多算子通过通用 fallback 路径执行
 
 ### 12.4 代码统计
